@@ -1,9 +1,8 @@
 <?php
-<<<<<<< HEAD
 require("cfd.php");
 require("header.php");
 require("footer.php");
-=======
+
 $dbhost = "localhost";
 $dbuser = "user";
 $dbpassword = "password";
@@ -11,7 +10,6 @@ $dbdatabase = "databse";
 $config_basedir = "http://ramonmorales831.com/account/";//this line
 $db = mysqli_connect($dbhost, $dbuser, $dbpassword, $dbdatabase) or die("Error " . mysqli_error($db));
 date_default_timezone_set('America/Chicago');
->>>>>>> f29e545e2efef8ef1b315a7fdc9d75ac08508f25
 
 // Fetch usernames from the database
 $sql = "SELECT username FROM username"; 
@@ -91,8 +89,6 @@ $conn->close();
 
 ?>
 
-<<<<<<< HEAD
-=======
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,4 +101,3 @@ $conn->close();
   
 </body>
 </html>
->>>>>>> f29e545e2efef8ef1b315a7fdc9d75ac08508f25
