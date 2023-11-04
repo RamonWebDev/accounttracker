@@ -1,8 +1,8 @@
 <?php
 $dbhost = "localhost";
-$dbuser = "ramonm_acc";
-$dbpassword = "KDxzVe^AInra";
-$dbdatabase = "ramonm_account";
+$dbuser = "user";
+$dbpassword = "password";
+$dbdatabase = "databse";
 $config_basedir = "http://ramonmorales831.com/account/";//this line
 $db = mysqli_connect($dbhost, $dbuser, $dbpassword, $dbdatabase) or die("Error " . mysqli_error($db));
 date_default_timezone_set('America/Chicago');
