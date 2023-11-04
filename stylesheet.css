@@ -1,0 +1,45 @@
+.holder {
+    display: flex;
+    flex-wrap: wrap; /* Allow cards to wrap to the next row */
+    justify-content: start; /* Distribute cards evenly horizontally */
+    padding: 10px; /* Add spacing around the holder */
+	
+}
+
+.card {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: calc(25% - 20px); /* Set the width to 25% of the container width, accounting for margin */
+    margin: 10px;
+}
+
+.user-info {
+    list-style: none;
+    padding: 0;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #0099ff;
+    border-radius: 50%;
+}
+
+.level {
+    width: 50px;
+    height: 50px;
+}
+
+.username {
+    font-weight: bold;
+    color: #333;
+    font-size: 18px;
+}
+
+/* Media query for mobile devices */
+@media screen and (max-width: 768px) {
+    .card {
+        width: calc(80% - 10px); /* Adjust the width for two cards on each row in smaller screens */
+    }
+}
