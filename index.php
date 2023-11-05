@@ -128,4 +128,3 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 $conn->close();
 
 ?>
-
