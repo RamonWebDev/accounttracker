@@ -1,5 +1,5 @@
 <?php
-require("cfd.php");//holds info with database
+require("cfd.php");
 require("header.php");
 require("footer.php");
 
@@ -65,7 +65,7 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 		$avatar = $data['portrait'] ?? '';
 		$level = $data['endorsement'] ?? '';
 		// Initialize variables for competitive division rankings
-		$tankDivision = $damageDivision = $supportDivision = '';
+		$tankDivision = $damageDivision = $supportDivision = "Not Ranked";
 		$tophero = $data['competitive'] ?? '';
 
 		// Check and set competitive division rankings if available
@@ -83,16 +83,35 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 		
 		// Extract the top 3 played heroes from the stats data
 		$topHeroes = [];
+		$ranHero = null; // Initialize $ranHero
+
 		if (isset($data['stats']['top_heroes']['competitive']['played'])) {
-        $playedHeroes = $data['stats']['top_heroes']['competitive']['played'];
-        $topHeroes = array_slice($playedHeroes, 0, 3); // Get the first 3 played heroes
-    }
+			$playedHeroes = $data['stats']['top_heroes']['competitive']['played'];
+
+			// Get the first 3 played heroes
+			$topHeroes = array_slice($playedHeroes, 0, 3);
+
+			// Check if there is at least one hero in the topHeroes array
+			if (!empty($topHeroes)) {
+				// Use array_rand to get a random index from the topHeroes array
+				$randomIndex = array_rand($topHeroes);
+				// Extract the hero name from the randomly selected index
+				$ranHero = $topHeroes[$randomIndex]['hero'];
+
+				// Remove spaces from the hero name if it's "Soldier 76" or "Wrecking Ball"
+				$ranHero = str_replace([' ', ':'], '', $ranHero);
+			}
+		}
+
+		// Now, $ranHero contains the name of a random hero from the top 3 played heroes.
+
 
 		//Display card with info
-		echo "<div class='card'>";
+		echo "<div class='card' style=\"background-image: url('img/{$ranHero}.jpg'); background-size: cover; background-position: center;\">";
 		echo "<ul class='user-info'>";
 		echo "<li><img src='$avatar' alt='User Avatar' class='avatar'></li>";
 		echo "<li><img width='50' height='50' src='$level' alt='User Level' class='level'></li>";
+		echo "<div class='border'>";
 		echo "<li class='username'>$username</li>";
 		echo "<li>Tank Rank: {$tankDivision}</li>";
 		echo "<li>DPS Rank: {$damageDivision}</li>";
@@ -105,12 +124,10 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 			$heroImg = $hero['img'] ?? ''; // You can use this URL to display hero images
 			echo "<li>$heroName</li>";
 		}
-		echo "</ul>";
-		
-		
-		
-		echo "</ul>";
-		echo "</div>";
+		echo "</ul>";//end topHeroes
+		echo "</div>";//end border
+		echo "</ul>";//end user-info
+		echo "</div>"; //end card
 		
 	}
 
@@ -118,7 +135,7 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 	foreach ($usernames as $name) {
 		fetchProfile($name);
 	}
-	echo "</div>";
+	echo "</div>"; //end holder 
 
 	} else {
 		echo "No usernames found in the database.";
@@ -128,3 +145,4 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 $conn->close();
 
 ?>
+
