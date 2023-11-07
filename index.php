@@ -17,6 +17,9 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 	
 	// Define named functions
 	function fetchProfile($account) {
+		    // Extract the numbers after "-" in the account name
+		$accountParts = explode('-', $account);
+		$accountNumber = end($accountParts);
 		$profileUrl = "https://owapi.io/profile/pc/us/{$account}";
 		$profileResponse = file_get_contents($profileUrl); // Fetch the profile data from the specified URL
 
@@ -31,11 +34,12 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 			return; // Exit the function
 		}
 		
+		$statsData = fetchStats($accountNumber); // Use the extracted account number
 		$statsData = fetchStats($account); // Call a separate function to fetch additional stats data
 		// Merge profile and stats data into a single data array
 		$mergedData = array_merge($profileData, $statsData);
 
-		displayStats($mergedData); // Display the merged data using a separate function
+		displayStats($mergedData, $accountNumber); // Display the merged data using a separate function
 
 	}
 
@@ -59,7 +63,7 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 		return $statsData; //returns data
 	}
 
-	function displayStats($data) {
+	function displayStats($data, $accountNumber) {
 		 // Extract basic user information
 		$username = $data['username'] ?? ''; //if NULL changes to ''
 		$avatar = $data['portrait'] ?? '';
@@ -110,9 +114,9 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 		echo "<div class='card' style=\"background-image: url('img/{$ranHero}.jpg'); background-size: cover; background-position: center;\">";
 		echo "<ul class='user-info'>";
 		echo "<li><img src='$avatar' alt='User Avatar' class='avatar'></li>";
-		echo "<li><img width='50' height='50' src='$level' alt='User Level' class='level'></li>";
+		echo "<br>";
 		echo "<div class='border'>";
-		echo "<li class='username'>$username</li>";
+		echo "<li class='username battlenet'>$username#$accountNumber<i class='clipboardIcon bx bx-clipboard'></i><img src='$level' alt='User Level' class='level'></li>";
 		echo "<li>Tank Rank: {$tankDivision}</li>";
 		echo "<li>DPS Rank: {$damageDivision}</li>";
 		echo "<li>Support Rank: {$supportDivision}</li>";
@@ -145,4 +149,3 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 $conn->close();
 
 ?>
-
