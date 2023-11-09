@@ -10,15 +10,25 @@ $result = $conn->query($sql); // Execute the SQL query and store the result
 if ($result->num_rows > 0) {
     echo "<div class='holder'>"; // Open a holder div to group and display user cards
 
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) { //pulling out data from database to make useful
         $battlenet = $row["battlenet"];
         $avatar = $row["avatar"];
         $tankRank = $row["tankRank"];
         $dpsRank = $row["dpsRank"];
         $supportRank = $row["supportRank"];
+		$hero1 = $row["hero1"];
+		$hero2 = $row["hero2"];
+		$hero3 = $row["hero3"];
+		
+		$top3Heroes = array_map(function ($hero) { //loops through top 3 heroes and removes spaces and :
+			$hero = str_replace(" ", "", $hero);
+			$hero = str_replace(":", "", $hero);
+			return $hero;
+		}, [$hero1, $hero2, $hero3]);
+		shuffle($top3Heroes); //shuffles array 
 
         //Display card with info
-        echo "<div class='card' style=\"background-image: url('img/{$ranHero}.jpg'); background-size: cover; background-position: center;\">";
+        echo "<div class='card' style=\"background-image: url('img/$top3Heroes[0].jpg'); background-size: cover; background-position: center;\">";
         echo "<ul class='user-info'>";
         echo "<li><img src='$avatar' alt='User Avatar' class='avatar'></li>";
         echo "<br>";
@@ -28,14 +38,12 @@ if ($result->num_rows > 0) {
         echo "<li>DPS Rank: $dpsRank</li>";
         echo "<li>Support Rank: $supportRank</li>";
         // Display the top 3 played heroes
-        //echo "<li>Top 3 Played Heroes:</li>";
-        //echo "<ul>";
-        //foreach ($topHeroes as $hero) {
-        //    $heroName = $hero['hero'] ?? 'Unknown Hero';
-        //    $heroImg = $hero['img'] ?? ''; // You can use this URL to display hero images
-        //    echo "<li>$heroName</li>";
-        //}
-        //echo "</ul>";//end topHeroes
+        echo "<li>Top 3 Played Heroes:</li>";
+        echo "<ul>";
+		echo "<li>$hero1</li>";
+		echo "<li>$hero2</li>";
+		echo "<li>$hero3</li>";
+        echo "</ul>";//end topHeroes
         echo "</div>";//end border
         echo "</ul>";//end user-info
         echo "</div>"; //end card
@@ -50,10 +58,10 @@ $conn->close();
 
 ?>
 
-<button onclick='refresh()' id="executeButton">Execute PHP Script</button>
+<button onclick='refresh()' id="executeButton">Update Accounts</button>
 
 <script>
-	document.getElementById("executeButton").addEventListener("click", function() {
+	document.getElementById("executeButton").addEventListener("click", function() { //causes stats script to reload and update database
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", "stats.php", true);
 		xhr.onload = function() {
@@ -64,7 +72,7 @@ $conn->close();
 			xhr.send();
 	});
 	
-	function refresh(){
+	function refresh(){ //refreshes window 
 		window.location.href = 'index.php';
 	}
 </script>
