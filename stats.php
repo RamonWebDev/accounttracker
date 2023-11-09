@@ -98,11 +98,6 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 			$hero2 = isset($topHeroes[1]['hero']) ? $conn->real_escape_string($topHeroes[1]['hero']) : null;
 			$hero3 = isset($topHeroes[2]['hero']) ? $conn->real_escape_string($topHeroes[2]['hero']) : null;
 
-			// Loop through the data and display it
-		foreach ($topHeroes as $heroData) {
-			echo "Hero: " . $heroData["hero"] . "<br>";
-		}
-
 		} else {
 			// Handle the case when the data doesn't exist
 			$topHeroes = []; // Set an empty array or default values
@@ -144,26 +139,5 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 
 // Close the database connection
 $conn->close();
-
-// Define your data as an array
-$data = [
-    [
-        "hero" => "Hanzo",
-        "img" => "https://d15f34w2p8l1cc.cloudfront.net/overwatch/aecd8fa677f0093344fab7ccb7c37516c764df3f5ff339a5a845a030a27ba7e0.png",
-        "played" => "01:46:25"
-    ],
-    [
-        "hero" => "Pharah",
-        "img" => "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f8261595eca3e43e3b37cadb8161902cc416e38b7e0caa855f4555001156d814.png",
-        "played" => "01:35:22"
-    ],
-    [
-        "hero" => "Widowmaker",
-        "img" => "https://d15f34w2p8l1cc.cloudfront.net/overwatch/a714f1cb33cc91c6b5b3e89ffe7e325b99e7c89cc8e8feced594f81305147efe.png",
-        "played" => "01:22:47"
-    ]
-];
-
-
 
 ?>
