@@ -111,16 +111,16 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
         $damageDivision = $conn->real_escape_string($damageDivision);
         $supportDivision = $conn->real_escape_string($supportDivision);
 
-			$sql = "UPDATE username SET 
-				battlenet = '{$account}',
-				avatar = '{$avatar}',
-				tankRank = '{$tankDivision}',
-				dpsRank = '{$damageDivision}',
-				supportRank = '{$supportDivision}',
-				hero1 = '{$hero1}', 
-				hero2 = '{$hero2}',
-				hero3 = '{$hero3}'
-				WHERE username = '{$account}'";
+        $sql = "UPDATE username SET 
+        battlenet = '{$account}',
+        avatar = '{$avatar}',
+        tankRank = CASE WHEN '{$tankDivision}' != 'Not Ranked' THEN '{$tankDivision}' ELSE tankRank END,
+        dpsRank = CASE WHEN '{$damageDivision}' != 'Not Ranked' THEN '{$damageDivision}' ELSE dpsRank END,
+        supportRank = CASE WHEN '{$supportDivision}' != 'Not Ranked' THEN '{$supportDivision}' ELSE supportRank END,
+        hero1 = '{$hero1}', 
+        hero2 = '{$hero2}',
+        hero3 = '{$hero3}'
+        WHERE username = '{$account}'";
 
         if ($conn->query($sql) === TRUE) {
             echo "Record updated successfully"; // Success message
