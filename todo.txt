@@ -1,0 +1,4 @@
+#TODO
+1. Fix issue with file_get_contents()
+2. Improve code
+3. Try changing code towards OOP 
