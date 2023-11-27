@@ -3,6 +3,8 @@ require("cfd.php");
 require("header.php");
 require("footer.php");
 
+define('OWURL', 'https://owapi.io/stats/pc/us/'); //API URL
+
 // Fetch usernames from the database
 $sql = "SELECT username FROM username"; // SQL query to select usernames from the 'username' table
 $result = $conn->query($sql); // Execute the SQL query and store the result
@@ -15,8 +17,11 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
     }
 
 	function fetchStats($account) {
-		$statsUrl = "https://owapi.io/stats/pc/us/{$account}";
-		$statsResponse = file_get_contents($statsUrl);
+		$ch = curl_init(OWURL.$account);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$statsResponse = curl_exec($ch);
+		curl_close($ch);
+		echo "Raw Response: " . $statsResponse . "\n";
 		
 		 // Check if the response is false, indicating no stats were found for the user
 		if ($statsResponse === false) {
@@ -36,30 +41,35 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 	
 
 
-    function fetchProfile($account, $conn) {
+	 function fetchProfile($account, $conn) {
         // Extract the numbers after "-" in the account name
 		$accountName = $account;
         $accountParts = explode('-', $account);
         $accountNumber = end($accountParts);
-        $profileUrl = "https://owapi.io/profile/pc/us/{$account}";
-        $profileResponse = file_get_contents($profileUrl); // Fetch the profile data from the specified URL
+		$ch = curl_init(OWURL . $account);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$profileResponse = curl_exec($ch);
 
-        if ($profileResponse === false) {
-            echo "No Account Found For {$account}\n"; // Display an error message if the profile data is not found
-            return; // Exit the function
-        }
+		if ($profileResponse === false) {
+			echo "cURL Error: " . curl_error($ch); // Display a detailed cURL error message
+			curl_close($ch);
+			return; // Exit the function
+		}
 
-        $profileData = json_decode($profileResponse, true); // Parse the profile data as JSON
-        if ($profileData === null) {
-            echo "Error decoding JSON\n"; // Display an error message if JSON decoding fails
-            return; // Exit the function
-        }
+		curl_close($ch);
 
-        $statsData = fetchStats($accountName);
-        // Merge profile and stats data into a single data array
-        $mergedData = array_merge($profileData, $statsData);
+		$profileData = json_decode($profileResponse, true);
 
-        displayStats($mergedData, $accountNumber, $conn); // Pass the database connection to the displayStats function
+		if ($profileData === null) {
+			echo "Error decoding JSON\n"; // Display an error message if JSON decoding fails
+			return; // Exit the function
+		}
+
+		$statsData = fetchStats($accountName);
+		// Merge profile and stats data into a single data array
+		$mergedData = array_merge($profileData, $statsData);
+
+		displayStats($mergedData, $accountNumber, $conn);
     }
 
     function displayStats($data, $accountNumber, $conn) {
@@ -137,7 +147,11 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
     echo "No usernames found in the database.";
 }
 
+
+
 // Close the database connection
 $conn->close();
+
+echo '<h2>hello</h2>';
 
 ?>
