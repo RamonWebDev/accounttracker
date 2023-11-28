@@ -81,18 +81,21 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
         $tankDivision = $damageDivision = $supportDivision = "Not Ranked";
         $tophero = $data['competitive'] ?? '';
 
-        // Check and set competitive division rankings if available
-        if (isset($data['competitive']['tank'])) {
-            $tankDivision = $data['competitive']['tank']['rank'];
-        }
-
-        if (isset($data['competitive']['offense'])) {
-            $damageDivision = $data['competitive']['offense']['rank'];
-        }
-
-        if (isset($data['competitive']['support'])) {
-            $supportDivision = $data['competitive']['support']['rank'];
-        }
+    // Assign values if the data is available
+    if (isset($data['summary']['competitive']['pc']['tank'])) {
+        $tankDivision = $data['summary']['competitive']['pc']['tank']['division'];
+        $tankTier = $data['summary']['competitive']['pc']['tank']['tier'];
+    }
+	    // Assign values if the data is available
+    if (isset($data['summary']['competitive']['pc']['damage'])) {
+        $damageDivision = $data['summary']['competitive']['pc']['damage']['division'];
+        $damageTier = $data['summary']['competitive']['pc']['damage']['tier'];
+    }
+	    // Assign values if the data is available
+    if (isset($data['summary']['competitive']['pc']['damage'])) {
+        $supportDivision = $data['summary']['competitive']['pc']['support']['division'];
+        $supportTier = $data['summary']['competitive']['pc']['support']['tier'];
+    }
 
         // Extract the top 3 played heroes from the stats data
         $topHeroes = [];
