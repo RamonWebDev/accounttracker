@@ -76,7 +76,7 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
         // Extract basic user information
         $username = $data['summary']['username'] ?? '';
         $avatar = $data['summary']['avatar'] ?? '';
-        $level = $data['endorsement'] ?? '';
+        $level = $data['summary']['endorsement']['frame'] ?? '';
         // Initialize variables for competitive division rankings
         $tankDivision = $damageDivision = $supportDivision = "Not Ranked";
         $tophero = $data['competitive'] ?? '';
