@@ -3,7 +3,7 @@ require("cfd.php");
 require("header.php");
 require("footer.php");
 
-define('OWURL', 'https://owapi.io/stats/pc/us/'); //API URL
+define('OWURL', 'https://overfast-api.tekrop.fr/players/'); //API URL
 
 // Fetch usernames from the database
 $sql = "SELECT username FROM username"; // SQL query to select usernames from the 'username' table
@@ -74,8 +74,8 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 
     function displayStats($data, $accountNumber, $conn) {
         // Extract basic user information
-        $username = $data['username'] ?? '';
-        $avatar = $data['portrait'] ?? '';
+        $username = $data['summary']['username'] ?? '';
+        $avatar = $data['summary']['avatar'] ?? '';
         $level = $data['endorsement'] ?? '';
         // Initialize variables for competitive division rankings
         $tankDivision = $damageDivision = $supportDivision = "Not Ranked";
