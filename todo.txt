@@ -1,4 +1,3 @@
 #TODO
-1. Get new API 
 2. edit code to match new API 
 3. adjust php code to enter in database 
