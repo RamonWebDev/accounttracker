@@ -21,8 +21,10 @@ if ($result->num_rows > 0) {
 		$hero3 = $row["hero3"];
 		
 		$top3Heroes = array_map(function ($hero) { //loops through top 3 heroes and removes spaces and :
+			$hero = ucfirst($hero);
 			$hero = str_replace(" ", "", $hero);
 			$hero = str_replace(":", "", $hero);
+			$hero = str_replace("-", "", $hero);
 			return $hero;
 		}, [$hero1, $hero2, $hero3]);
 		shuffle($top3Heroes); //shuffles array 
