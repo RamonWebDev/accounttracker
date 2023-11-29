@@ -13,12 +13,14 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) { //pulling out data from database to make useful
         $battlenet = $row["battlenet"];
         $avatar = $row["avatar"];
-        $tankRank = $row["tankRank"];
-        $dpsRank = $row["dpsRank"];
-        $supportRank = $row["supportRank"];
-		$hero1 = $row["hero1"];
-		$hero2 = $row["hero2"];
-		$hero3 = $row["hero3"];
+        $tankRank = ucfirst($row["tankRank"]);
+        $dpsRank = ucfirst($row["dpsRank"]);
+        $supportRank = ucfirst($row["supportRank"]);
+		$hero1 = ucfirst($row["hero1"]);
+		$hero2 = ucfirst($row["hero2"]);
+		$hero3 = ucfirst($row["hero3"]);
+		
+		
 		
 		$copyBattlenet = str_replace("-", "#", $battlenet);
 		$top3Heroes = array_map(function ($hero) { //loops through top 3 heroes and removes spaces and :
