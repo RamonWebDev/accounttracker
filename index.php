@@ -20,6 +20,7 @@ if ($result->num_rows > 0) {
 		$hero2 = $row["hero2"];
 		$hero3 = $row["hero3"];
 		
+		$copyBattlenet = str_replace("-", "#", $battlenet);
 		$top3Heroes = array_map(function ($hero) { //loops through top 3 heroes and removes spaces and :
 			$hero = ucfirst($hero);
 			$hero = str_replace(" ", "", $hero);
@@ -35,7 +36,7 @@ if ($result->num_rows > 0) {
         echo "<li><img src='$avatar' alt='User Avatar' class='avatar'></li>";
         echo "<br>";
         echo "<div class='border'>";
-        echo "<li class='username battlenet'>$battlenet<i class='clipboardIcon bx bx-clipboard'></i></li>";
+        echo "<li class='username battlenet'>$copyBattlenet<i class='clipboardIcon bx bx-clipboard'></i></li>";
         echo "<li>Tank Rank: $tankRank</li>";
         echo "<li>DPS Rank: $dpsRank</li>";
         echo "<li>Support Rank: $supportRank</li>";
