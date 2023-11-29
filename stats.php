@@ -16,126 +16,114 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
         $usernames[] = $row["username"]; // Store each username in the array
     }
 
-	function fetchStats($account) {
-		$ch = curl_init(OWURL.$account);
+	function fetchStats($account, $conn) {
+		// Extract the numbers after "-" in the account name
+		$accountName = $account;
+		$accountParts = explode('-', $account);
+		$accountNumber = end($accountParts);
+
+		$ch = curl_init(OWURL . $account);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$statsResponse = curl_exec($ch);
-		curl_close($ch);
-		echo "Raw Response: " . $statsResponse . "\n";
-		
-		 // Check if the response is false, indicating no stats were found for the user
+
+		// Check for cURL errors
 		if ($statsResponse === false) {
-			echo "No Stats Found For {$account}\n";
-			return [];// Return an empty array as there are no stats to display
+			echo "cURL Error: " . curl_error($ch) . "\n";
+			return []; // Return an empty array as there are no stats to display
 		}
 
 		// Attempt to decode the JSON response containing user stats
-		$statsData = json_decode($statsResponse, true); 
-		if ($statsData === null) {
-			echo "Error decoding JSON\n";// Display an error message if JSON decoding fails
-			return [];// Return an empty array in case of an error
-		}
+		$statsData = json_decode($statsResponse, true);
 
-		return $statsData; //returns data
+		// Check for JSON decoding errors
+		if ($statsData === null && json_last_error() !== JSON_ERROR_NONE) {
+			echo "Error decoding JSON: " . json_last_error_msg() . "\n";
+			// Output the raw JSON response for investigation
+			echo "Raw JSON Response: " . $statsResponse . "\n";
+			return []; // Return an empty array in case of an error
+		}
+		
+		curl_close($ch);
+		displayStats($statsData, $accountNumber, $conn);
 	}
 	
 
-
-	 function fetchProfile($account, $conn) {
-        // Extract the numbers after "-" in the account name
-		$accountName = $account;
-        $accountParts = explode('-', $account);
-        $accountNumber = end($accountParts);
-		$ch = curl_init(OWURL . $account);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$profileResponse = curl_exec($ch);
-
-		if ($profileResponse === false) {
-			echo "cURL Error: " . curl_error($ch); // Display a detailed cURL error message
-			curl_close($ch);
-			return; // Exit the function
-		}
-
-		curl_close($ch);
-
-		$profileData = json_decode($profileResponse, true);
-
-		if ($profileData === null) {
-			echo "Error decoding JSON\n"; // Display an error message if JSON decoding fails
-			return; // Exit the function
-		}
-
-		$statsData = fetchStats($accountName);
-		// Merge profile and stats data into a single data array
-		$mergedData = array_merge($profileData, $statsData);
-
-		displayStats($mergedData, $accountNumber, $conn);
-    }
-
     function displayStats($data, $accountNumber, $conn) {
         // Extract basic user information
-        $username = $data['summary']['username'] ?? '';
-        $avatar = $data['summary']['avatar'] ?? '';
-        $level = $data['summary']['endorsement']['frame'] ?? '';
+		$username = $data['summary']['username'];
+		$avatar = $data['summary']['avatar'];
+		$level = $data['summary']['endorsement']['frame'];
         // Initialize variables for competitive division rankings
-        $dpsRank = $tankRank = $supportRank = "Not Ranked";
-        $tophero = $data['competitive'] ?? '';
+		$tankDivision = $damageDivision = $supportDivision = "Not Ranked";
+		$tankTier = $damageTier = $supportTier = "";
+		$dpsRank = $tankRank = $supportRank = "Not Ranked";
+        //$tophero = $data['competitive'] ?? '';
 
-    // Assign values if the data is available
-    if (isset($data['summary']['competitive']['pc']['tank'])) {
-        $tankDivision = $data['summary']['competitive']['pc']['tank']['division'];
-        $tankTier = $data['summary']['competitive']['pc']['tank']['tier'];
-		$tankRank = $tankDivision. ' '.  $tankTier;
-    }
-	    // Assign values if the data is available
-    if (isset($data['summary']['competitive']['pc']['damage'])) {
-        $damageDivision = $data['summary']['competitive']['pc']['damage']['division'];
-        $damageTier = $data['summary']['competitive']['pc']['damage']['tier'];
-		$dpsRank = $damageDivision. ' '.  $damageTier;
-    }
-	    // Assign values if the data is available
-    if (isset($data['summary']['competitive']['pc']['support'])) {
-        $supportDivision = $data['summary']['competitive']['pc']['support']['division'];
-        $supportTier = $data['summary']['competitive']['pc']['support']['tier'];
-		$supportRank = $supportDivision. ' '.  $supportTier;
-    }
+		// Assign values if the data is available
+		if (isset($data['summary']['competitive']['pc']['tank'])) {
+			$tankDivision = $data['summary']['competitive']['pc']['tank']['division'];
+			$tankTier = $data['summary']['competitive']['pc']['tank']['tier'];
+			$tankRank = $tankDivision. ' '.  $tankTier;
+		}
+			// Assign values if the data is available
+		if (isset($data['summary']['competitive']['pc']['damage'])) {
+			$damageDivision = $data['summary']['competitive']['pc']['damage']['division'];
+			$damageTier = $data['summary']['competitive']['pc']['damage']['tier'];
+			$dpsRank = $damageDivision. ' '.  $damageTier;
+		}
+			// Assign values if the data is available
+		if (isset($data['summary']['competitive']['pc']['support'])) {
+			$supportDivision = $data['summary']['competitive']['pc']['support']['division'];
+			$supportTier = $data['summary']['competitive']['pc']['support']['tier'];
+			$supportRank = $supportDivision. ' '.  $supportTier;
+		}
 
         // Extract the top 3 played heroes from the stats data
         $topHeroes = [];
 
-		// Check if the path to top played heroes data exists in the API response
-		if (isset($data['stats']['top_heroes']['competitive']['played'])) {
-			$playedHeroes = $data['stats']['top_heroes']['competitive']['played'];
+	// Check if the path to top played heroes data exists in the API response
+    if (isset($data['stats']['pc']['competitive']['heroes_comparisons']['time_played']['values'])) {
+        $playedHeroes = $data['stats']['pc']['competitive']['heroes_comparisons']['time_played']['values'];
 
-			// Get the first 3 played heroes
-			$topHeroes = array_slice($playedHeroes, 0, 3);
-			    // Extract the heroes into separate variables
-			$hero1 = isset($topHeroes[0]['hero']) ? $conn->real_escape_string($topHeroes[0]['hero']) : null;
-			$hero2 = isset($topHeroes[1]['hero']) ? $conn->real_escape_string($topHeroes[1]['hero']) : null;
-			$hero3 = isset($topHeroes[2]['hero']) ? $conn->real_escape_string($topHeroes[2]['hero']) : null;
-
-		} else {
-			// Handle the case when the data doesn't exist
-			$topHeroes = []; // Set an empty array or default values
+        // Iterate through the first 3 elements of the values array
+        for ($i = 0; $i < min(3, count($playedHeroes)); $i++) {
+            // Check if the 'hero' key exists in each value
+            if (isset($playedHeroes[$i]['hero'])) {
+                // Access and print the 'hero' value
+                $topHeroes[] = $conn->real_escape_string($playedHeroes[$i]['hero']);
+            }
+        }
+    } else {
+        // Handle the case when the data doesn't exist
+        $topHeroes = []; // Set an empty array or default values
+    }
+	    // Initialize hero variables
+		$hero1 = $hero2 = $hero3 = '';
+		// If you want to assign them to separate variables, you can do something like this:
+		if (!empty($topHeroes)) {
+			list($hero1, $hero2, $hero3) = $topHeroes;
 		}
 
 
         // Update the database with the values
         $account = $username . '-' . $accountNumber;
         $avatar = $conn->real_escape_string($avatar);
-        $tankDivision = $conn->real_escape_string($tankDivision);
-        $damageDivision = $conn->real_escape_string($damageDivision);
-        $supportDivision = $conn->real_escape_string($supportDivision);
+        $tankRank = $conn->real_escape_string($tankRank);
+        $dpsRank = $conn->real_escape_string($dpsRank);
+        $supportRank = $conn->real_escape_string($dpsRank);
+		$hero1 = $conn->real_escape_string($hero1);
+		$hero2 = $conn->real_escape_string($hero2);
+		$hero3 = $conn->real_escape_string($hero3);
 
-        $sql = "UPDATE username SET 
+		$sql = "UPDATE username SET 
         battlenet = '{$account}',
         avatar = '{$avatar}',
-        tankRank = CASE WHEN '{$tankDivision}' != 'Not Ranked' THEN '{$tankDivision}' ELSE tankRank END,
-        dpsRank = CASE WHEN '{$damageDivision}' != 'Not Ranked' THEN '{$damageDivision}' ELSE dpsRank END,
-        supportRank = CASE WHEN '{$supportDivision}' != 'Not Ranked' THEN '{$supportDivision}' ELSE supportRank END,
-        hero1 = '{$hero1}', 
-        hero2 = '{$hero2}',
-        hero3 = '{$hero3}'
+        tankRank = CASE WHEN '{$tankRank}' != 'Not Ranked' THEN '{$tankRank}' ELSE tankRank END,
+        dpsRank = CASE WHEN '{$dpsRank}' != 'Not Ranked' THEN '{$dpsRank}' ELSE dpsRank END,
+        supportRank = CASE WHEN '{$supportRank}' != 'Not Ranked' THEN '{$supportRank}' ELSE supportRank END,
+        hero1 = COALESCE(NULLIF('{$hero1}', ''), hero1), 
+        hero2 = COALESCE(NULLIF('{$hero2}', ''), hero2),
+        hero3 = COALESCE(NULLIF('{$hero3}', ''), hero3)
         WHERE username = '{$account}'";
 
         if ($conn->query($sql) === TRUE) {
@@ -146,8 +134,8 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
     }
 
     // Fetch profile and stats for each username
-    foreach ($usernames as $name) {
-        fetchProfile($name, $conn); // Pass the database connection to the fetchProfile function
+    foreach ($usernames as $account) {
+        fetchStats($account, $conn); // Pass the database connection to the fetchProfile function
     }
 } else {
     echo "No usernames found in the database.";
@@ -158,6 +146,5 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 // Close the database connection
 $conn->close();
 
-echo '<h2>hello</h2>';
 
 ?>
