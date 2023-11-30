@@ -24,7 +24,6 @@ if ($result->num_rows > 0) {
 		
 		$copyBattlenet = str_replace("-", "#", $battlenet);
 		$top3Heroes = array_map(function ($hero) { //loops through top 3 heroes and removes spaces and :
-			$hero = ucfirst($hero);
 			$hero = str_replace(" ", "", $hero);
 			$hero = str_replace(":", "", $hero);
 			$hero = str_replace("-", "", $hero);
