@@ -54,10 +54,8 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 		$avatar = $data['summary']['avatar'];
 		$level = $data['summary']['endorsement']['frame'];
         // Initialize variables for competitive division rankings
-		$tankDivision = $damageDivision = $supportDivision = "Not Ranked";
 		$tankTier = $damageTier = $supportTier = "";
 		$dpsRank = $tankRank = $supportRank = "Not Ranked";
-        //$tophero = $data['competitive'] ?? '';
 
 		// Assign values if the data is available
 		if (isset($data['summary']['competitive']['pc']['tank'])) {
@@ -110,7 +108,7 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
         $avatar = $conn->real_escape_string($avatar);
         $tankRank = $conn->real_escape_string($tankRank);
         $dpsRank = $conn->real_escape_string($dpsRank);
-        $supportRank = $conn->real_escape_string($dpsRank);
+        $supportRank = $conn->real_escape_string($supportRank);
 		$hero1 = $conn->real_escape_string($hero1);
 		$hero2 = $conn->real_escape_string($hero2);
 		$hero3 = $conn->real_escape_string($hero3);
