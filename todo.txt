@@ -1,3 +1,4 @@
 #TODO
-2. edit code to match new API 
-3. adjust php code to enter in database 
+1. work on background
+2. work on design for index.php
+3. Maybe work on login system
