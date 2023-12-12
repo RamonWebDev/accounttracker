@@ -1,4 +1,7 @@
 #TODO
-1. work on background
-2. work on design for index.php
-3. Maybe work on login system
+1. Edit Database for new Users
+2. Create Login/Register 
+3. Work on design 
+4. Design Website look
+5. Maybe turn into API aswell 
+6. Maybe Create discord bot 
