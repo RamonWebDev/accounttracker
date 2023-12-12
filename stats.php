@@ -6,7 +6,7 @@ require("footer.php");
 define('OWURL', 'https://overfast-api.tekrop.fr/players/'); //API URL
 
 // Fetch usernames from the database
-$sql = "SELECT username FROM username"; // SQL query to select usernames from the 'username' table
+$sql = "SELECT username FROM account"; // SQL query to select usernames from the 'username' table
 $result = $conn->query($sql); // Execute the SQL query and store the result
 
 if ($result->num_rows > 0) { // Check if there are rows (usernames) in the result
@@ -113,7 +113,7 @@ if ($result->num_rows > 0) { // Check if there are rows (usernames) in the resul
 		$hero2 = $conn->real_escape_string($hero2);
 		$hero3 = $conn->real_escape_string($hero3);
 
-		$sql = "UPDATE username SET 
+		$sql = "UPDATE account SET 
         battlenet = '{$account}',
         avatar = '{$avatar}',
         tankRank = CASE WHEN '{$tankRank}' != 'Not Ranked' THEN '{$tankRank}' ELSE tankRank END,
