@@ -4,7 +4,7 @@ require("header.php");
 require("footer.php");
 
 // Fetch usernames from the database
-$sql = "SELECT * FROM username"; // SQL query to select usernames from the 'username' table
+$sql = "SELECT * FROM account"; // SQL query to select usernames from the 'username' table
 $result = $conn->query($sql); // Execute the SQL query and store the result
 
 if ($result->num_rows > 0) {
