@@ -1,7 +1,6 @@
 #TODO
-1. Edit Database for new Users
-2. Create Login/Register 
-3. Work on design 
-4. Design Website look
-5. Maybe turn into API aswell 
-6. Maybe Create discord bot 
+1. Create Login/Register 
+2. Work on design 
+3. Design Website look
+4. Maybe turn into API aswell 
+5. Maybe Create discord bot 
