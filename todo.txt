@@ -1,6 +1,0 @@
-#TODO
-1. Create Login/Register 
-2. Work on design 
-3. Design Website look
-4. Maybe turn into API aswell 
-5. Maybe Create discord bot 
